@@ -15,4 +15,10 @@ class Factory(TileSource):
         pass
     
     def startNewRound(self) ->None:
-        pass
+        self.tiles = self.bag.take(4)
+
+    def take(self, idx: int):
+        taking: List[Tile] = super.take()
+        self.tableCenter.add(self.tiles)
+        self.tiles = []
+        return taking
