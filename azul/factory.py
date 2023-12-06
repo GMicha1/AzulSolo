@@ -6,13 +6,12 @@ from bag import Bag
 from tileSources import tableCenter
 
 class Factory(TileSource):
-    self.bag: Bag
-    self.tableCenter: tableCenter
+    bag: Bag
+    tableCenter: tableCenter
     def __init__(self, bag: Bag, tableCenter: tableCenter) -> None:
+        super().__init__()
         self.bag = bag
         self.tableCenter = tableCenter
-        super.__init__(self)
-        pass
     
     def startNewRound(self) ->None:
         self.tiles = self.bag.take(4)
