@@ -5,16 +5,20 @@ from board import Board
 from usedTiles import usedTiles
 from bag import Bag
 from tableArea import TableArea
-import customErrors 
+from customErrors import NotPlayersTurn, GameIsOver, EmptySourceOrWrongColour 
+from interfaces import FinishRoundResult
+#bruteforce is used on things I realized too late to discuss it with the team
 
 class Game:
     _playerBoards: List[Board]
     _table: TableArea
     currentPlayer: int
     gameOver: bool
+    nextFirst: int
     def __init__(self, numOfPlayers: int, names: List[str] = list(), startPlayer: int = 0) -> None:
-        gameOver = False
-        self.currentPlayer = startPlayer
+        self.gameOver = False
+        self.nextFirst = startPlayer
+        self.currentPlayer = self.nextFirst
         self._playerBoards = list()
         used_tiles: usedTiles = usedTiles()
         self._table: TableArea = TableArea(numOfPlayers, Bag(used_tiles))
@@ -29,24 +33,50 @@ class Game:
         #Strating player in center because __init__
     
     def take(self, playerId:int, sourceId: int, idx:int, destinationIdx:int) -> None:
-        if(gameOver):
+        if(self.gameOver):
             raise GameIsOver
-        if(playerId != currentPlayer):
+        if(playerId != self.currentPlayer):
             raise NotPlayersTurn
         if(sourceId < -1):
             raise ValueError("Invalid source index")
         
-        takenTiles = self._table.take(sourceId, idx)
-        if((not takenTiles) or takenTiles == [STARTING_PLAYER]):
+        takenTiles: List[Tile] = self._table.take(sourceId, idx)
+        if((not takenTiles)):
             raise EmptySourceOrWrongColour
-        self._playerBoards[currentPlayer].put(destinationIdx:int, takenTiles)
+        if(STARTING_PLAYER in takenTiles):
+            self.nextFirst = self.currentPlayer #not using boards bool, it resets easily
+
+        ####UNSURE IF WRONG INDEX IS OK, or it goes to floor and then still raises idx exception
+        currentBoard = self._playerBoards[self.currentPlayer]
+        currentBoard.put(destinationIdx, takenTiles)
         
         if(self._table.isRoundEnd):
-            ###finishRound
-            #startNewRound
+            self.finishRound()
 
-    def startNewRound(self):
-        pass
+
+        #state: str later
+        #set currentPlayer
+        #say whos turn is next
+
+    def finishRound(self) -> None: #pomocna metoda
+        #state: str later
+        for board in self._playerBoards:
+            roundOver = board.finishRound()
+            if(roundOver == FinishRoundResult.GAME_FINISHED):
+                self.gameOver = True
+
+        ##winners, points special state
+        if(self.gameOver):
+            for board in self._playerBoards:
+                board.endGame()
+                ##winners, points special state
+            return
+
+        self.startNewRound()
+
+    def startNewRound(self) -> None: #pomocna metoda
+        self._table.startNewRound()
+        self._table.tableCenter.startNewRound() #bruteforce since tableCenter restart not in table
         
 
 

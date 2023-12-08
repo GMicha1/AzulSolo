@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import List
 import random
 from game import Game
+from customErrors import NotPlayersTurn, GameIsOver, EmptySourceOrWrongColour
 
 class GameInterface:
     numOfPlayers: int = 0
@@ -53,10 +54,10 @@ class GameInterface:
         self.your_game = Game(self.numOfPlayers, self.names, startPId)
         "Game START"
         
-    def inputTake(self) -> str:
+    def inputTake(self) -> str: #unused function present just because
         playerId: int = 0 #would be implicit from input sender hopefully?
-        sourceId: int = int(input("From which factory?"))
-        idx: int = int(input("Which color?"))
+        sourceId: int = int(input("From which source? (center: -1)"))
+        idx: int = int(input("Which color? S: 0, R: 1, B: 2, Y: 3, G: 4, L: 5"))
         destinationIdx: int = int(input("Where should it go?"))
         self.take(playerId, sourceId, idx, destinationIdx)
         
@@ -64,6 +65,15 @@ class GameInterface:
         try:
             your_game.take(playerId, sourceId, idx, destinationIdx)
             return True
-        except:
-            #Later add exception messages
+        except ValueError:
+            print("Incorrect source index.")
+            return False
+        except NotPlayersTurn:
+            print("Right now is a different players turn.")
+            return False
+        except GameIsOver:
+            print("This game is already over.")
+            return False
+        except EmptySourceOrWrongColour:
+            print("Your specified source either does not have this color or is empty.")
             return False

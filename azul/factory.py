@@ -17,7 +17,7 @@ class Factory(TileSource):
         self.tiles = self.bag.take(4)
 
     def take(self, idx: int):
-        taking: List[Tile] = super.take()
+        taking: List[Tile] = super().take(idx)
         self.tableCenter.add(self.tiles)
         self.tiles = []
         return taking
