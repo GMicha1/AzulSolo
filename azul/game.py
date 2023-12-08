@@ -7,6 +7,7 @@ from bag import Bag
 from tableArea import TableArea
 from customErrors import NotPlayersTurn, GameIsOver, EmptySourceOrWrongColour 
 from interfaces import FinishRoundResult
+from game_observer import GameObserver
 #bruteforce is used on things I realized too late to discuss it with the team
 
 class Game:
@@ -15,13 +16,17 @@ class Game:
     currentPlayer: int
     gameOver: bool
     nextFirst: int
+    gameObserver: GameObserver
+    bag: Bag
     def __init__(self, numOfPlayers: int, names: List[str] = list(), startPlayer: int = 0) -> None:
         self.gameOver = False
         self.nextFirst = startPlayer
+        self._observer = GameObserver
         self.currentPlayer = self.nextFirst
         self._playerBoards = list()
         used_tiles: usedTiles = usedTiles()
-        self._table: TableArea = TableArea(numOfPlayers, Bag(used_tiles))
+        self.bag = Bag(used_tiles)
+        self._table: TableArea = TableArea(numOfPlayers, self.bag)
         player_names: List[str] = names.copy()
         for i in range(numOfPlayers):
             if(player_names):
@@ -52,10 +57,12 @@ class Game:
         
         if(self._table.isRoundEnd):
             self.finishRound()
+            self.currentPlayer = self.nextFirst
 
-
+        else:
+            self.currentPlayer = (self.currentplayer + 1)% len(self._playerBoards)
         #state: str later
-        #set currentPlayer
+        #self.observer.notifyEverybody
         #say whos turn is next
 
     def finishRound(self) -> None: #pomocna metoda
@@ -73,6 +80,15 @@ class Game:
             return
 
         self.startNewRound()
+
+    def state(self) -> str:
+        state:str = self._table.state() + "\n"
+        state +=  self.bag.state() + "\n"
+        for i in G._playerBoards:
+            state += "\n" + i.state() + "\n"
+            for j in i._pattern_line:
+                state += j.stateWithWall() + "\n"
+        return state
 
     def startNewRound(self) -> None: #pomocna metoda
         self._table.startNewRound()

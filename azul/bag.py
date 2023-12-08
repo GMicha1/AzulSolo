@@ -15,10 +15,16 @@ class Bag:
     def state(self) -> str:
         if (not self.tiles):
             return "The bag is empty"
-        state: str = compress_tile_list(self.tiles) + " -> "
+        #state: str = compress_tile_list(self.tiles) + " -> "
+        state: str = "In bag -> "
         for tileType in [RED, BLUE, YELLOW, GREEN, BLACK]:
             state += str(tileType) + ":" + str(self.tiles.count(tileType)) + " "
         return state
+
+    def stateList(self) -> str:
+        if(not self.tiles):
+            return ""
+        return compress_tile_list(self.tiles)
 
     def take(self, count: int, testing: bool = False) -> List[Tile]:
         taken: List[Tile] = list()

@@ -48,3 +48,7 @@ class patternLine:
         state: str = compress_tile_list(self._tilesInLine)
         state += (self.capacity - len(state)) * "-"
         return state
+
+    def stateWithWall(self) -> str:
+        stateWithWall:str = self._wallLine.state()
+        return stateWithWall + "| <- |" + self.state()
