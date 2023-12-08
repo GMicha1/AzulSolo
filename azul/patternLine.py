@@ -22,8 +22,8 @@ class patternLine:
         self.used_tiles = usedTiles
     
     def put(self, tiles: List[Tile]) -> None:
-        if(len(set(tiles)) > 1 or  (not tiles) or STARTING_PLAYER in self._tilesInLine):
-            raise ValueError("Pattern line recieved wrong input")
+        if(tiles == list()):
+            return
         if(tiles[0] in self._tilesInLine or (not self._tilesInLine)):
             self._tilesInLine.extend(tiles)
             tiles = list()

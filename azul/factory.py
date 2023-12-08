@@ -13,11 +13,15 @@ class Factory(TileSource):
         self.bag = bag
         self.tableCenter = tableCenter
     
-    def startNewRound(self) ->None:
+    def startNewRound(self) -> None:
         self.tiles = self.bag.take(4)
 
-    def take(self, idx: int):
+    def take(self, idx: int) -> List[Tile]:
         taking: List[Tile] = super().take(idx)
         self.tableCenter.add(self.tiles)
         self.tiles = []
         return taking
+
+    def state(self) -> str:
+        state: str = super().state()
+        return "/" + state + "\\"

@@ -36,6 +36,8 @@ class Game:
 
         self._table.startNewRound()
         #Strating player in center because __init__
+        state: str = self.stateTable() + self.state()
+        self._observer.notifyEverybody(state)
     
     def take(self, playerId:int, sourceId: int, idx:int, destinationIdx:int) -> None:
         if(self.gameOver):
@@ -55,18 +57,20 @@ class Game:
         currentBoard = self._playerBoards[self.currentPlayer]
         currentBoard.put(destinationIdx, takenTiles)
         
-        if(self._table.isRoundEnd):
+        if(self._table.isRoundEnd()):
             self.finishRound()
             self.currentPlayer = self.nextFirst
-
         else:
-            self.currentPlayer = (self.currentplayer + 1)% len(self._playerBoards)
-        #state: str later
-        #self.observer.notifyEverybody
-        #say whos turn is next
+            self.currentPlayer = (self.currentPlayer + 1)% len(self._playerBoards)
+
+        state: str = ""
+        if(not self.gameOver):
+            state += self.stateTable()
+        state += self.state()
+            
+        self._observer.notifyEverybody(state)
 
     def finishRound(self) -> None: #pomocna metoda
-        #state: str later
         for board in self._playerBoards:
             roundOver = board.finishRound()
             if(roundOver == FinishRoundResult.GAME_FINISHED):
@@ -74,20 +78,34 @@ class Game:
 
         ##winners, points special state
         if(self.gameOver):
+            winner: Board = self._playerBoards[0]
             for board in self._playerBoards:
                 board.endGame()
-                ##winners, points special state
+                if(board._points.value > winner._points.value):
+                    winner = board
+            self.nextFirst = len(self._playerBoards)
+            win: str = f"The winner is {winner._player_name} with {str(winner._points)} points!"
+            self._observer.notifyEverybody(win)
             return
+        self._observer.notifyEverybody("Starting new round... \n")
 
         self.startNewRound()
-
-    def state(self) -> str:
+    def stateTable(self) -> str:
         state:str = self._table.state() + "\n"
         state +=  self.bag.state() + "\n"
-        for i in G._playerBoards:
+        return state
+
+    def state(self) -> str:
+        state:str = ""
+        for i in self._playerBoards:
+            if(self.currentPlayer < len(self._playerBoards)
+               and i == self._playerBoards[self.currentPlayer]):
+                state += "\nThis player takes tiles next:"
             state += "\n" + i.state() + "\n"
             for j in i._pattern_line:
                 state += j.stateWithWall() + "\n"
+            state += i._floor.state() + "\n"
+            
         return state
 
     def startNewRound(self) -> None: #pomocna metoda
