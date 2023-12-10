@@ -9,3 +9,7 @@ class EmptySourceOrWrongColour(Exception):
 class GameIsOver(Exception):
     "This game is already over"
     pass
+
+class NonViableColorIdx(Exception):
+    "You have chosen a non-viable color option"
+    pass

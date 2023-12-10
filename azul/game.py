@@ -5,7 +5,7 @@ from board import Board
 from usedTiles import usedTiles
 from bag import Bag
 from tableArea import TableArea
-from customErrors import NotPlayersTurn, GameIsOver, EmptySourceOrWrongColour 
+from customErrors import NotPlayersTurn, GameIsOver, EmptySourceOrWrongColour, NonViableColorIdx
 from interfaces import FinishRoundResult
 from game_observer import GameObserver
 #bruteforce is used on things I realized too late to discuss it with the team
@@ -46,6 +46,8 @@ class Game:
             raise NotPlayersTurn
         if(sourceId < -1):
             raise ValueError("Invalid source index")
+        if((sourceId != -1 and idx == 0) or idx > 5 or idx < 0):
+            raise NonViableColorIdx
         
         takenTiles: List[Tile] = self._table.take(sourceId, idx)
         if((not takenTiles)):
@@ -90,6 +92,7 @@ class Game:
         self._observer.notifyEverybody("Starting new round... \n")
 
         self.startNewRound()
+        
     def stateTable(self) -> str:
         state:str = self._table.state() + "\n"
         state +=  self.bag.state() + "\n"

@@ -15,7 +15,6 @@ class Bag:
     def state(self) -> str:
         if (not self.tiles):
             return "The bag is empty"
-        #state: str = compress_tile_list(self.tiles) + " -> "
         state: str = "In bag -> "
         for tileType in [RED, BLUE, YELLOW, GREEN, BLACK]:
             state += str(tileType) + ":" + str(self.tiles.count(tileType)) + " "
@@ -30,9 +29,10 @@ class Bag:
         taken: List[Tile] = list()
         for i in range(count):
             if(not self.tiles):
-                self.used_tiles.takeAll()
+                self.tiles = self.used_tiles.takeAll()
                 if(not self.tiles):
-                    raise IndexError("Insuficient number of tiles")
+                    #"Insuficient number of tiles"
+                    break
             if(testing):#pseudorandomForTesting (hopefully)
                 idxOfTile = 0
             else:
