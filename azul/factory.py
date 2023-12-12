@@ -18,8 +18,9 @@ class Factory(TileSource):
 
     def take(self, idx: int) -> List[Tile]:
         taking: List[Tile] = super().take(idx)
-        self.tableCenter.add(self.tiles)
-        self.tiles = []
+        if(taking):
+            self.tableCenter.add(self.tiles)
+            self.tiles = []
         return taking
 
     def state(self) -> str:
