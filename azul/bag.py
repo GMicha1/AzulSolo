@@ -25,7 +25,7 @@ class Bag:
             return ""
         return compress_tile_list(self.tiles)
 
-    def take(self, count: int, testing: bool = False) -> List[Tile]:
+    def take(self, count: int, testing: bool = False, seed: int = 0) -> List[Tile]:
         taken: List[Tile] = list()
         for i in range(count):
             if(not self.tiles):
@@ -34,8 +34,7 @@ class Bag:
                     #"Insuficient number of tiles"
                     break
             if(testing):#pseudorandomForTesting (hopefully)
-                idxOfTile = 0
-            else:
-                idxOfTile = random.randrange(0,len(self.tiles))
+                random.seed(seed)
+            idxOfTile = random.randrange(0,len(self.tiles))
             taken.append(self.tiles.pop(idxOfTile))
         return taken
