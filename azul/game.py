@@ -18,11 +18,12 @@ class Game:
     nextFirst: int
     gameObserver: GameObserver
     bag: Bag
-    def __init__(self, numOfPlayers: int, names: List[str] = list(), startPlayer: int = 0) -> None:
+    def __init__(self, numOfPlayers: int, names: List[str] = list(),
+                 startPlayer: int = 0) -> None:
         self.gameOver = False
         self.nextFirst = startPlayer
-        self._observer = GameObserver
         self.currentPlayer = self.nextFirst
+        self._observer = GameObserver
         self._playerBoards = list()
         used_tiles: usedTiles = usedTiles()
         self.bag = Bag(used_tiles)
@@ -35,11 +36,12 @@ class Game:
                 self._playerBoards.append(Board(used_tiles))
 
         self._table.startNewRound()
-        #Strating player in center because __init__
+        #Stating player already in center because __init__
         state: str = self.stateTable() + self.state()
         self._observer.notifyEverybody(state)
-    
-    def take(self, playerId:int, sourceId: int, idx:int, destinationIdx:int) -> None:
+        
+        
+    def takeTiles(self, playerId:int, sourceId: int, idx:int) -> List[Tile]: #pomocna metoda k take
         if(self.gameOver):
             raise GameIsOver
         if(playerId != self.currentPlayer):
@@ -54,8 +56,9 @@ class Game:
             raise EmptySourceOrWrongColour
         if(STARTING_PLAYER in takenTiles):
             self.nextFirst = self.currentPlayer #not using boards bool, it resets easily
+        return takenTiles
 
-        ####UNSURE IF WRONG INDEX IS OK, or it goes to floor and then still raises idx exception
+    def putTiles(self, takenTiles:List[Tile], destinationIdx:int) -> None: #druha pomocna metoda k take
         currentBoard = self._playerBoards[self.currentPlayer]
         currentBoard.put(destinationIdx, takenTiles)
         
@@ -65,19 +68,21 @@ class Game:
         else:
             self.currentPlayer = (self.currentPlayer + 1)% len(self._playerBoards)
 
+    def take(self, playerId:int, sourceId: int, idx:int, destinationIdx:int) -> None:
+        tiles: List[Tile] = self.takeTiles(playerId, sourceId, idx)
+        self.putTiles(tiles, destinationIdx)
+        
         state: str = ""
         if(not self.gameOver):
             state += self.stateTable()
-        state += self.state()
-            
+        state += self.state() 
         self._observer.notifyEverybody(state)
 
     def finishRound(self) -> None: #pomocna metoda
         for board in self._playerBoards:
-            roundOver = board.finishRound()
+            roundOver:FinishRoundResult = board.finishRound()
             if(roundOver == FinishRoundResult.GAME_FINISHED):
                 self.gameOver = True
-
         ##winners, points special state
         if(self.gameOver):
             winner: Board = self._playerBoards[0]
@@ -89,8 +94,8 @@ class Game:
             win: str = f"The winner is {winner._player_name} with {str(winner._points)} points!"
             self._observer.notifyEverybody(win)
             return
+        
         self._observer.notifyEverybody("Starting new round... \n")
-
         self.startNewRound()
         
     def stateTable(self) -> str:
