@@ -5,8 +5,6 @@ from wallLine import WallLine
 from floor import Floor
 from usedTiles import usedTiles
 
-#P = patternLine(3, Floor([Points(1), Points(2)], usedTiles()),
-#usedTiles(), WallLine([RED, BLACK, GREEN, BLUE, YELLOW]))
 class patternLine:
     capacity: int 
     _tilesInLine: List[Tile]

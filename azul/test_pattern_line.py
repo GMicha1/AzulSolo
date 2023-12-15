@@ -18,9 +18,11 @@ class TestPatternLine(unittest.TestCase):
 
         self.patternLine.put([RED])
         self.assertEqual(self.patternLine.stateWithWall(), "-----| <- |R--")
+        self.assertEqual(self.patternLine._floor._tiles, [])
 
         self.patternLine.put([BLUE])
         self.assertEqual(self.patternLine.state(), "R--")
+        self.assertEqual(self.patternLine._floor._tiles, [BLUE])
 
         self.patternLine.put([RED])
         endRound0: Points = self.patternLine.finishRound()
@@ -29,6 +31,7 @@ class TestPatternLine(unittest.TestCase):
         
         self.patternLine.put([RED]*5)
         self.assertEqual(self.patternLine._tilesInLine, [RED]*3)
+        self.assertEqual(self.patternLine._floor._tiles, [BLUE] + [RED]*4) #not reseting w/out board
         endRound1: Points = self.patternLine.finishRound()
         self.assertEqual(self.patternLine.stateWithWall(), "R----| <- |---")
         self.assertEqual(endRound1.value, 1)
@@ -42,6 +45,7 @@ class TestPatternLine(unittest.TestCase):
         endRound3: Points = self.patternLine.finishRound()
         self.assertEqual(endRound3.value, 0)
         self.assertEqual(self.patternLine.stateWithWall(), "RB---| <- |---")
+        self.assertEqual(self.patternLine._floor._tiles, [BLUE] + [RED]*4 + [BLUE] + [RED]*3)
 
 if __name__ == '__main__':
     unittest.main()
