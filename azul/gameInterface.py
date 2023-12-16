@@ -70,7 +70,7 @@ class GameInterface:
                 raise WrongStartInfo
             self.numOfPlayers = testNumOfPlayers
             self.names = testNames
-            if(testFirst < testNumOfPlayer and testFirst >= 0):
+            if(testFirst < testNumOfPlayers and testFirst >= 0):
                 startPId = testFirst
         else:
             self.GUIpt1()
