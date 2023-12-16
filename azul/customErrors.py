@@ -13,3 +13,7 @@ class GameIsOver(Exception):
 class NonViableColorIdx(Exception):
     "You have chosen a non-viable color option"
     pass
+
+class WrongStartInfo(Exception):
+    "Cannot start the game with this number of players"
+    pass
