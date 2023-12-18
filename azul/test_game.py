@@ -10,10 +10,10 @@ from unittest.mock import Mock
 
 class TestGame(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.game: Game = Game(3,["A", "B"], 2)
 
-    def test_game(self):
+    def test_game(self) -> None:
         self.assertFalse(self.game.gameOver)
         self.assertEqual(self.game.currentPlayer, 2)
         self.assertEqual(self.game.nextFirst, 2)
@@ -43,7 +43,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(self.game.nextFirst, 2)
         
         self.game.putTiles(takenTiles0, 0)
-        self.game._playerBoards[2].put.assert_called_once_with(0, [RED, RED, RED])###############
+        self.game._playerBoards[2].put.assert_called_with(0, [RED, RED, RED])
         self.assertEqual(self.game.nextFirst, 2)
         self.assertEqual(self.game.currentPlayer, 0)
         

@@ -7,7 +7,7 @@ from tileSources import tableCenter
 
 class Factory(TileSource):
     bag: Bag
-    tableCenter: tableCenter
+    #tableCenter: tableCenter       ->mypy issue
     def __init__(self, bag: Bag, tableCenter: tableCenter) -> None:
         super().__init__()
         self.bag = bag

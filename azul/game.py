@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Optional
 from simple_types import Tile, compress_tile_list, Points, RED, BLUE, YELLOW, GREEN, BLACK, STARTING_PLAYER
 from board import Board
 from usedTiles import usedTiles
@@ -79,18 +79,21 @@ class Game:
         self._observer.notifyEverybody(state)
 
     def finishRound(self) -> None: #pomocna metoda
+        fullRowBoard: Optional[Board] = None
         for board in self._playerBoards:
             roundOver:FinishRoundResult = board.finishRound()
             if(roundOver == FinishRoundResult.GAME_FINISHED):
+                fullRowBoard = board
                 self.gameOver = True
         ##winners, points special state
         if(self.gameOver):
-            winner: Board = self._playerBoards[0]
+            winner: Board = fullRowBoard
             for board in self._playerBoards:
-                board.endGame()
-                if(board._points.value > winner._points.value):
-                    winner = board
-            self.nextFirst = len(self._playerBoards)
+                if(board != fullRowBoard):
+                    board.endGame()
+                    if(board._points.value > winner._points.value):
+                        winner = board
+            self.nextFirst = len(self._playerBoards)#for state without nextPlayer
             win: str = f"The winner is {winner._player_name} with {str(winner._points)} points!"
             self._observer.notifyEverybody(win)
             return

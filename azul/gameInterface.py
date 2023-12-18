@@ -52,10 +52,10 @@ class GameInterface:
         else:
             print("There is no player like that, choosing starting player at random.")
             startPId = random.randrange(0, self.numOfPlayers)
-        return startPid
+        return startPId
         "Game START"
 
-    def inputTake(self, pId) -> str: #unused function present just because
+    def inputTake(self, pId: int) -> None: #unused function present just because
         playerId: int = pId # IRL would be implicit from input sender hopefully?
         sourceId: int = int(input("From which source? (center: -1)"))
         idx: int = int(input("Which color? S: 0, R: 1, B: 2, Y: 3, G: 4, L: 5"))
@@ -96,3 +96,4 @@ class GameInterface:
             return False
         except NonViableColorIdx:
             print("You have chosen a non-viable color option.")
+            return False
