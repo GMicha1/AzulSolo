@@ -94,8 +94,12 @@ class TestGame(unittest.TestCase):
         self.assertEqual(self.game.currentPlayer, 0) #changed to nextFirst instead of +1
 
         self.game._playerBoards[2].finishRound = Mock(return_value=FinishRoundResult.GAME_FINISHED)
-        self.game.take(0, 1, 1, 1)        
+        self.game.take(0, 1, 1, 1)
+        self.game._playerBoards[0].endGame.assert_called_once_with()
+        self.game._playerBoards[1].endGame.assert_called_once_with()
+        assert not self.game._playerBoards[2].endGame.called
         self.assertTrue(self.game.gameOver)
+        
         self.assertTrue("\nThis player takes tiles next:" not in self.game.state())
 
         with self.assertRaises(GameIsOver):
